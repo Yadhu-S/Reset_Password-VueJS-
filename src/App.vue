@@ -1,49 +1,56 @@
 <template>
-      <div class="container-fluid fullBox">
-        <div class="row">
-          <div class="col-lg-6 col-md-6 col-sm-6">
-          <img  class="img-responsive center-block modalIcon" src="./assets/logo.png" draggable="false">
-          </div>
-          <div class="col-lg-6 col-md-6 col-sm-6 customLogin">
-            <transition name="fade" mode="out-in">
-              <div v-if="mobPage" key="mobNo">
-                <i v-if="invalidPhone" class="fa fa-exclamation-triangle fa-lg exclaim" aria-hidden="true"></i>
-                <p v-if="invalidPhone" class="exceedLimits">{{errorMessage}}</p>
-                <mat-input>
-                  <input @click.once="mobFld" @keyup="enableOtpButton" v-model="mobIp" slot="ipField" type="text" class="inputMat" required>
-                  <label slot="label" class="labelMat">Your Mobile Number</label>
-                </mat-input>
-                <transition name="slide-fade" mode="out-in">
-                  <mat-input v-if="validMob" key="valid" >
-                    <input slot="ipField" v-model="otpValue" type="text" class="inputMat" required @keyup="enableValidateButton" >
-                    <label slot="label" class="labelMatPass center-block">OTP</label>
-                  </mat-input >
-                  <div v-else class="dummyDiv" key="invalid">
-                  </div>
-                </transition>
-                <p v-if="enableBut==1" class="botButtonModal center-block" @click.once="sendOtp">Send OTP</p>
-                <p v-else-if="enableBut==0" class="botButtonModalDisabled center-block">Send OTP</p>
-                <p v-else-if="enableBut==2" class="botButtonModalDisabled center-block">Validate</p>
-                <p v-else-if="enableBut==3" class="botButtonModal center-block" @click.once="validate">Validate</p>
-              </div>
-              <div v-else key="passChange">
-                <mat-input>
-                  <input v-model="usnIp" slot="ipField" type="text" class="inputMat" required>
-                  <label slot="label" class="labelMat">New Password</label>
-                </mat-input>
-                <mat-input>
-                  <input slot="ipField" type="password" class="inputMat" required>
-                  <label slot="label" class="labelMatPass center-block">Repeat Password</label>
-                </mat-input>
-                <p class="botButtonModalSignUP center-block">Change Password</p>
+  <div class="container-fluid fullBox">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6">
+        <img  class="img-responsive center-block modalIcon" src="./assets/logo.png" draggable="false">
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 customLogin">
+        <transition name="slide-fade" mode="out-in">
+          <div v-if="mobAndOtpPage" key="mobNo">
+            <font-awesome-icon v-if="spinnerActive" class="spinnerPos" icon="spinner" size="lg" pulse/>
+            <font-awesome-icon v-if="showFirstBoxAndIcon" class="exclaim" icon="exclamation-triangle" size="lg"/>
+            <p v-if="showFirstBoxAndIcon" :class="{firstErrorDiv: firstBoxError}">{{firstBoxMessage}}</p>
+            <font-awesome-icon v-if="showSecondBoxAndIcon" class="OtpExclaim" icon="exclamation-triangle" size="lg"/>
+            <p v-if="showSecondBoxAndIcon" :class="{secondErrorDiv: secondBoxError}">{{secondBoxMessage}}</p>
+            <mat-input>
+              <input @click.once="mobFld"  @keyup="enableOtpField" v-model="mobileNumber" slot="ipField" type="text" class="inputMat" required>
+              <label slot="label" class="labelMat">Your Mobile Number</label>
+            </mat-input>
+            <transition name="slide-fade" mode="out-in">
+              <mat-input v-if="OtpGenerated" key="valid" >
+                
+                <input slot="ipField" v-model="otpValue" type="text" class="inputMat" required @keyup="enableValidateButton" >
+                <label slot="label" class="labelMatPass center-block">OTP</label>
+              </mat-input >
+              <div v-else class="dummyDiv" key="invalid">
               </div>
             </transition>
-          <div>
-              <h6 class="loginFooter">By signing in you agree to 123 Find's Terms of Service, Privacy Policy and Conditions</h6>
-            </div>
+            <p v-if="mainButtonState==1" class="ButtonEnabled center-block" @click="sendOtp">Send OTP</p>
+            <p v-else-if="mainButtonState==0" class="ButtonDisabled center-block">Send OTP</p>
+            <p v-else-if="mainButtonState==2" class="ButtonDisabled center-block">Verify</p>
+            <p v-else-if="mainButtonState==3" class="ButtonEnabled center-block" @click.once="validate">Verify</p>
           </div>
+          <div v-else key="passChange">
+            <font-awesome-icon v-if="spinnerActive" class="spinnerPosResetPassword" icon="spinner" size="lg" pulse/>
+            <p :class="{secondSuccessDiv:showThirdBoxAndIcon}">{{secondBoxMessage}}</p>
+            <mat-input>
+              <input v-model="newPassword" slot="ipField" type="text" class="inputMat" required>
+              <label slot="label" class="labelMat">New Password</label>
+            </mat-input>
+            <mat-input>
+              <input v-model="repeatPassword" slot="ipField" type="password" class="inputMat" required>
+              <label slot="label" class="labelMatPass center-block">Repeat Password</label>
+            </mat-input>
+            
+            <p class="botButtonModalSignUP center-block" @click="postPassword">Reset Password</p>
+          </div>
+        </transition>
+        <div>
+            <h6 class="loginFooter">By signing in you agree to 123 Find's Terms of Service, Privacy Policy and Conditions</h6>
         </div>
       </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -57,63 +64,113 @@ export default {
   },
   data() {
     return {
-      errorMessage:"",
-      invalidPhone:false,
-      url:"http://192.168.0.11:8000/shop/otp/reset",
-      mobPage:true,
+      spinnerActive:false,
+      secondBoxError:false,
+      firstBoxError:false,
+      firstBoxMessage:"",
+      secondBoxMessage:"",
+      secondBoxSuccess:false,
+      showFirstBoxAndIcon:false,
+      showSecondBoxAndIcon:false,
+      showThirdBoxAndIcon:true,
+      postUrl:"http://192.168.0.11:8000",
+      mobAndOtpPage:true,
       otpValue:null,
-      enableBut:0,
-      usnIp: "",
-      mobIp: "",
+      mainButtonState:0,
+      newPassword: "",
+      repeatPassword:"",
+      mobileNumber: "",
       searchInput: null,
       showSignIn: true,
-      validMob: false,
-      serverMsg: ""
+      OtpGenerated: false,
     };
   },
     methods: {
+      postPassword(){
+        console.log("hi")
+        this.spinnerActive = true
+        const ctx = this
+        if (this.newPassword == this.repeatPassword) {
+          axios.post(this.postUrl+"/shop/password/reset", { "contact-no": this.mobileNumber, "otp":parseInt(this.otpValue),"new-password":this.newPassword})
+          .then(function(response){
+            console.log(response)
+            if (response.data.success == true){
+              ctx.secondBoxMessage = "Your password was reset"
+              ctx.showThirdBoxAndIcon = true
+              ctx.secondBoxSuccess = true
+            }else {
+              ctx.secondBoxSuccess = false
+            }
+            ctx.spinnerActive = false
+          })
+        }
+      },
       validate () {
-        this.enableBut=2
-        this.mobPage = false
+        const ctx = this
+        this.spinnerActive = true
+        axios.post(this.postUrl+"/shop/validate", { "contact-no": this.mobileNumber, "otp":parseInt(this.otpValue)},"")
+        .then(function(response){
+           console.log(response)
+          if (response.data.success == true) {
+          ctx.mainButtonState=2
+          ctx.mobAndOtpPage = false
+          }else{
+            if (response.data.message.includes("E023")){
+              ctx.secondBoxMessage = "OTP Expired"
+              ctx.secondBoxError = true
+            } else if (response.data.message.includes("E014")){
+              ctx.secondBoxMessage = "Invalid OTP"
+              ctx.secondBoxError = true
+            }
+            ctx.showSecondBoxAndIcon = true
+          }
+          ctx.spinnerActive = false
+        })
       },
       enableValidateButton() {
         if (this.otpValue.length === 4) {
-          this.enableBut=3
+          this.mainButtonState=3
         }else {
-          this.enableBut=2
+          this.mainButtonState=2
         }
       },
-      enableOtpButton() {
-        if (this.mobIp.length === 13 || this.mobIp.length ===10) {
-          if (this.mobIp.includes("+91") && this.mobIp.length === 10){
+      enableOtpField() {
+        this.OtpGenerated = false;
+        this.showFirstBoxAndIcon=false;
+        if (this.mobileNumber.length === 13 || this.mobileNumber.length ===10) {
+          if (this.mobileNumber.includes("+91") && this.mobileNumber.length === 10){
             return
           }
-          this.enableBut = 1;
-          //this.postMobNum(this.mobIp); // Send to server
+          this.mainButtonState = 1;
+          //this.postMobNum(this.mobileNumber); // Send to server
         } else {
-          this.enableBut = 0;
+          this.mainButtonState = 0;
         }
       },
       mobFld() {
-        this.mobIp = "+91";
+        this.mobileNumber = "+91";
       },
       sendOtp() {
         const cntxt = this
-        this.enableBut =0
-        axios.post(this.url, { "contact-no": this.mobIp})
-        .then(function(response){
-          console.log(response.data.message)
-        if (response.data.success == true) {
-          cntxt.enableBut = 2;
-          cntxt.validMob=true;
-        }else if (response.data.message.includes("E021")){
-          cntxt.errorMessage = "We were unable to find any accounts linked to this mobile No.";
-          cntxt.invalidPhone = true;
+        this.mainButtonState = 0
+        this.spinnerActive = true
+        axios.post(this.postUrl+"/shop/otp/reset", { "contact-no": this.mobileNumber})
+          .then(function(response){
+            console.log(response.data.message)
+          if (response.data.success == true) {
+            cntxt.mainButtonState = 2;
+            cntxt.OtpGenerated=true;
+          }else if (response.data.message.includes("E021")){
+            cntxt.firstBoxMessage = "We were unable to find any accounts linked to this mobile No.";
+            cntxt.firstBoxError = true;
+            cntxt.showFirstBoxAndIcon = true;
 
-        }else if (response.data.message.includes("E022")){
-          cntxt.errorMessage = "This mobile No. has exceeded the limit alloted for one day";
-          cntxt.invalidPhone = true;
-        }
+          }else if (response.data.message.includes("E022")){
+            cntxt.firstBoxMessage = "This mobile No. has exceeded the limit alloted for one day";
+            cntxt.showFirstBoxAndIcon = true;
+            cntxt.firstBoxError = true;
+          }
+          cntxt.spinnerActive = false
         });
         
       }
@@ -152,13 +209,25 @@ export default {
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0
 }
-.exceedLimits{
+.firstErrorDiv{
   padding-top: 45px;
     position: absolute;
     font-size: 12px;
     color: red;
 }
-.botButtonModalDisabled {
+.secondErrorDiv{
+  padding-top: 107px;
+    position: absolute;
+    font-size: 12px;
+    color: red;
+}
+.secondSuccessDiv{
+  padding-top: 107px;
+    position: absolute;
+    font-size: 12px;
+    color: green;
+}
+.ButtonDisabled {
   width: 180px;
     border-radius: 5px;
     padding: 15px;
@@ -166,13 +235,13 @@ export default {
     background-color: DARKGREY;
     text-align: center;
     height: 50px;
-    margin-top: 40px;
+   margin-top:59px;
     cursor: NOT-ALLOWED;
     -webkit-box-shadow: 2px 2px 10px 0px rgba(136, 136, 136, 0.52);
     box-shadow: inset 0 0 3px 1px rgba(136, 136, 136, 0.52);
 }
 
-.botButtonModal{
+.ButtonEnabled{
     width: 180px;
     border-radius: 5px;
     padding: 15px;
@@ -180,10 +249,36 @@ export default {
     background-color: #1E88E5;
     text-align: center;
     height: 50px;
-    margin-top: 40px;
+   margin-top:59px;
     cursor: pointer;
     box-shadow: 2px 2px 10px 0px rgba(136, 136, 136, 0.52);
 }
+
+.ButtonEnabled:active{
+    width: 180px;
+    border-radius: 5px;
+    padding: 15px;
+    color: white;
+    background-color: #1E88E5;
+    text-align: center;
+    height: 50px;
+   margin-top:59px;
+    cursor: pointer;
+    box-shadow: inset 0px 0px 8px 3px rgba(136, 136, 136, 0.52);
+}
+.botButtonModalSignUP:active{
+    width: 180px;
+    border-radius: 5px;
+    padding: 15px;
+    color:white ;
+    background-color: #f46150;
+    text-align: center;
+    height: 50px;
+   margin-top:59px;
+    cursor: pointer;
+    box-shadow: inset 0px 0px 8px 3px rgba(136, 136, 136, 0.52);
+}
+
 .botButtonModalSignUP{
     width: 180px;
     border-radius: 5px;
@@ -192,7 +287,7 @@ export default {
     background-color: #f46150;
     text-align: center;
     height: 50px;
-    margin-top: 40px;
+   margin-top:59px;
     cursor: pointer;
     box-shadow: 2px 2px 10px 0px rgba(136, 136, 136, 0.52);
 }
@@ -317,12 +412,36 @@ export default {
         color: #fff;
     }
     .exclaim{
+      pointer-events: all;
+      color:red;
+      margin-left: 273px;
+      margin-top: 9px;
+      position: absolute;
+      z-index: 100;
+    }
+    .OtpExclaim{
       pointer-events: none;
     color:red;
-    padding-left: 273px;
-    padding-top: 9px;
+    margin-left: 273px;
+    margin-top: 72px;
     position: absolute;
     z-index: 100;
+    }
+    .spinnerPosResetPassword{
+      z-index: 100;
+      pointer-events: none;
+      color: white;
+    position: absolute;
+    margin-left: 72px;
+    margin-top: 172px;
+    }
+    .spinnerPos{
+      z-index: 100;
+      pointer-events: none;
+      color: white;
+    position: absolute;
+    margin-left: 83px;
+    margin-top: 177px;
     }
 </style>
 
