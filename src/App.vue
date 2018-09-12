@@ -13,13 +13,12 @@
             <font-awesome-icon v-if="showSecondBoxAndIcon" class="OtpExclaim" icon="exclamation-triangle" size="lg"/>
             <p v-if="showSecondBoxAndIcon" :class="{secondErrorDiv: secondBoxError}">{{secondBoxMessage}}</p>
             <mat-input>
-              <input @click.once="mobFld"  @keyup="enableOtpField" v-model="mobileNumber" slot="ipField" type="text" class="inputMat" required>
+              <input @click.once="mobFld" :readonly="mobNoFldReadOnly" @keyup="enableSendOtpButton" v-model="mobileNumber" slot="ipField" type="text" class="inputMat" :class="{disableMouseEvents:disableMouseMob}" required>
               <label slot="label" class="labelMat">Your Mobile Number</label>
             </mat-input>
             <transition name="slide-fade" mode="out-in">
               <mat-input v-if="OtpGenerated" key="valid" >
-                
-                <input slot="ipField" v-model="otpValue" type="text" class="inputMat" required @keyup="enableValidateButton" >
+                <input slot="ipField" v-model="otpValue" type="number" maxlength="4" class="inputMat" :class="{disableMouseEvents:disableMouseOTP}" required @keyup="enableValidateButton" >
                 <label slot="label" class="labelMatPass center-block">OTP</label>
               </mat-input >
               <div v-else class="dummyDiv" key="invalid">
@@ -32,17 +31,18 @@
           </div>
           <div v-else key="passChange">
             <font-awesome-icon v-if="spinnerActive" class="spinnerPosResetPassword" icon="spinner" size="lg" pulse/>
+            <font-awesome-icon v-if="passChanged" :class="{secondSuccessIcon:showThirdBoxAndIcon}" icon="check-circle" size="lg"/>
             <p :class="{secondSuccessDiv:showThirdBoxAndIcon}">{{secondBoxMessage}}</p>
             <mat-input>
-              <input v-model="newPassword" slot="ipField" type="text" class="inputMat" required>
+              <input v-model="newPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="text" class="inputMat" required>
               <label slot="label" class="labelMat">New Password</label>
             </mat-input>
             <mat-input>
-              <input v-model="repeatPassword" slot="ipField" type="password" class="inputMat" required>
+              <input v-model="repeatPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required>
               <label slot="label" class="labelMatPass center-block">Repeat Password</label>
             </mat-input>
             
-            <p class="botButtonModalSignUP center-block" @click="postPassword">Reset Password</p>
+            <p class="botButtonModalSignUP center-block" :class="{disableMouseEvents:passChanged, ButtonDisabled:passChanged}" @click="postPassword">Reset Password</p>
           </div>
         </transition>
         <div>
@@ -64,6 +64,10 @@ export default {
   },
   data() {
     return {
+      passChanged:false,
+      disableMouseOTP:false,
+      disableMouseMob:false,
+      mobNoFldReadOnly:false,
       spinnerActive:false,
       secondBoxError:false,
       firstBoxError:false,
@@ -97,6 +101,7 @@ export default {
             if (response.data.success == true){
               ctx.secondBoxMessage = "Your password was reset"
               ctx.showThirdBoxAndIcon = true
+              ctx.passChanged = true
               ctx.secondBoxSuccess = true
             }else {
               ctx.secondBoxSuccess = false
@@ -134,7 +139,7 @@ export default {
           this.mainButtonState=2
         }
       },
-      enableOtpField() {
+      enableSendOtpButton() {
         this.OtpGenerated = false;
         this.showFirstBoxAndIcon=false;
         if (this.mobileNumber.length === 13 || this.mobileNumber.length ===10) {
@@ -151,6 +156,8 @@ export default {
         this.mobileNumber = "+91";
       },
       sendOtp() {
+        //this.mobNoFldReadOnly = true
+        this.disableMouseMob = true
         const cntxt = this
         this.mainButtonState = 0
         this.spinnerActive = true
@@ -222,9 +229,15 @@ export default {
     color: red;
 }
 .secondSuccessDiv{
-  padding-top: 107px;
+  margin-left: 33px;
+    margin-top: 113px;
     position: absolute;
-    font-size: 12px;
+    font-size: 14px;
+    color: green;
+}
+.secondSuccessIcon{
+    margin-top: 112px;
+    position: absolute;
     color: green;
 }
 .ButtonDisabled {
@@ -442,6 +455,15 @@ export default {
     position: absolute;
     margin-left: 83px;
     margin-top: 177px;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        margin: 0; 
+    }
+    .disableMouseEvents{
+      pointer-events: none;
     }
 </style>
 

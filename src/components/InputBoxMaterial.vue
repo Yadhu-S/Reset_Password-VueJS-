@@ -37,7 +37,7 @@
     }
 
     /* active state */
-    .inputMat:focus ~ .labelMat, .inputMat:valid ~ .labelMat, .inputMat:focus ~ .labelMatPass, .inputMat:valid ~ .labelMatPass  		{
+    .inputMat:focus ~ .labelMat, .inputMat:valid ~ .labelMat, .inputMat:focus ~ .labelMatPass, .inputMat:valid ~ .labelMatPass,.inputMat:read-only ~ .labelMat  		{
       top:-12px;
       font-size:12px;
       color:#455e74;
