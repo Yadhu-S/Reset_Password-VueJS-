@@ -34,14 +34,14 @@
             <font-awesome-icon v-if="passChanged" :class="{secondSuccessIcon:showThirdBoxAndIcon}" icon="check-circle" size="lg"/>
             <p :class="{secondSuccessDiv:showThirdBoxAndIcon}">{{secondBoxMessage}}</p>
             <mat-input>
-              <input v-model="newPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="text" class="inputMat" required>
+              <input v-model="newPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required>
               <label slot="label" class="labelMat">New Password</label>
             </mat-input>
             <mat-input>
               <input v-model="repeatPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required>
               <label slot="label" class="labelMatPass center-block">Repeat Password</label>
             </mat-input>
-            
+
             <p class="botButtonModalSignUP center-block" :class="{disableMouseEvents:passChanged, ButtonDisabled:passChanged}" @click="postPassword">Reset Password</p>
           </div>
         </transition>
@@ -179,7 +179,7 @@ export default {
           }
           cntxt.spinnerActive = false
         });
-        
+
       }
     }
 }
@@ -456,11 +456,11 @@ export default {
     margin-left: 83px;
     margin-top: 177px;
     }
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
         -webkit-appearance: none;
         -moz-appearance: none;
-        margin: 0; 
+        margin: 0;
     }
     .disableMouseEvents{
       pointer-events: none;
