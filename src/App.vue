@@ -24,25 +24,25 @@
               <div v-else class="dummyDiv" key="invalid">
               </div>
             </transition>
-            <p v-if="mainButtonState==1" class="ButtonEnabled center-block" @click="sendOtp">Send OTP</p>
+            <p v-ripple v-if="mainButtonState==1" class="ButtonEnabled center-block" @click="sendOtp">Send OTP</p>
             <p v-else-if="mainButtonState==0" class="ButtonDisabled center-block">Send OTP</p>
             <p v-else-if="mainButtonState==2" class="ButtonDisabled center-block">Verify</p>
-            <p v-else-if="mainButtonState==3" class="ButtonEnabled center-block" @click.once="validate">Verify</p>
+            <p v-ripple v-else-if="mainButtonState==3" class="ButtonEnabled center-block" @click.once="validate">Verify</p>
           </div>
           <div v-else key="passChange">
             <font-awesome-icon v-if="spinnerActive" class="spinnerPosResetPassword" icon="spinner" size="lg" pulse/>
             <font-awesome-icon v-if="passChanged" :class="{secondSuccessIcon:showThirdBoxAndIcon}" icon="check-circle" size="lg"/>
-            <p :class="{secondSuccessDiv:showThirdBoxAndIcon}">{{secondBoxMessage}}</p>
+            <font-awesome-icon v-if="showPassExclaimIcon" class="exclaim-repeat" icon="exclamation-triangle" size="lg"/>
+            <p :class="{secondSuccessDiv:showThirdBoxAndIcon, secondPageSecondErrorDiv:repeatPasswordError}">{{secondBoxMessage}}</p>
             <mat-input>
               <input v-model="newPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required>
               <label slot="label" class="labelMat">New Password</label>
             </mat-input>
             <mat-input>
-              <input v-model="repeatPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required>
+              <input v-model="repeatPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required @keyup="verifyPasswords">
               <label slot="label" class="labelMatPass center-block">Repeat Password</label>
             </mat-input>
-
-            <p class="botButtonModalSignUP center-block" :class="{disableMouseEvents:passChanged, ButtonDisabled:passChanged}" @click="postPassword">Reset Password</p>
+            <p v-ripple class="botButtonModalSignUP center-block" :class="{disableMouseEvents:passChanged, ButtonDisabled:passChanged}" @click="postPassword">Reset Password</p>
           </div>
         </transition>
         <div>
@@ -64,6 +64,8 @@ export default {
   },
   data() {
     return {
+      repeatPasswordError : false,
+      showPassExclaimIcon:false,
       passChanged:false,
       disableMouseOTP:false,
       disableMouseMob:false,
@@ -90,14 +92,23 @@ export default {
     };
   },
     methods: {
+      verifyPasswords(){
+        if (this.newPassword != this.repeatPassword) {
+          this.showPassExclaimIcon = true
+          this.repeatPasswordError = true
+          this.secondBoxMessage = "Passwords do not match"
+        }else{
+          this.repeatPasswordError = false
+          this.secondBoxMessage = ""
+          this.showPassExclaimIcon = false
+        }
+      },
       postPassword(){
-        console.log("hi")
         this.spinnerActive = true
         const ctx = this
         if (this.newPassword == this.repeatPassword) {
           axios.post(this.postUrl+"/shop/password/reset", { "contact-no": this.mobileNumber, "otp":parseInt(this.otpValue),"new-password":this.newPassword})
           .then(function(response){
-            console.log(response)
             if (response.data.success == true){
               ctx.secondBoxMessage = "Your password was reset"
               ctx.showThirdBoxAndIcon = true
@@ -115,7 +126,6 @@ export default {
         this.spinnerActive = true
         axios.post(this.postUrl+"/shop/validate", { "contact-no": this.mobileNumber, "otp":parseInt(this.otpValue)},"")
         .then(function(response){
-           console.log(response)
           if (response.data.success == true) {
           ctx.mainButtonState=2
           ctx.mobAndOtpPage = false
@@ -163,7 +173,6 @@ export default {
         this.spinnerActive = true
         axios.post(this.postUrl+"/shop/otp/reset", { "contact-no": this.mobileNumber})
           .then(function(response){
-            console.log(response.data.message)
           if (response.data.success == true) {
             cntxt.mainButtonState = 2;
             cntxt.OtpGenerated=true;
@@ -228,15 +237,21 @@ export default {
     font-size: 12px;
     color: red;
 }
-.secondSuccessDiv{
-  margin-left: 33px;
-    margin-top: 113px;
+.secondSuccessDiv, .secondPageSecondErrorDiv{
+    margin-left: 33px;
+    margin-top: 108px;
     position: absolute;
     font-size: 14px;
+} 
+.secondSuccessDiv{
     color: green;
 }
+.secondPageSecondErrorDiv{
+  color: red;
+  margin-left: 0;
+}
 .secondSuccessIcon{
-    margin-top: 112px;
+    margin-top: 107px;
     position: absolute;
     color: green;
 }
@@ -255,29 +270,29 @@ export default {
 }
 
 .ButtonEnabled{
-    width: 180px;
-    border-radius: 5px;
-    padding: 15px;
-    color: white;
-    background-color: #1E88E5;
-    text-align: center;
-    height: 50px;
-   margin-top:59px;
-    cursor: pointer;
-    box-shadow: 2px 2px 10px 0px rgba(136, 136, 136, 0.52);
+  width: 180px;
+  border-radius: 5px;
+  padding: 15px;
+  color: white;
+  background-color: #1E88E5;
+  text-align: center;
+  height: 50px;
+  margin-top:59px;
+  cursor: pointer;
+  box-shadow: 2px 2px 10px 0px rgba(136, 136, 136, 0.52);
 }
 
 .ButtonEnabled:active{
-    width: 180px;
-    border-radius: 5px;
-    padding: 15px;
-    color: white;
-    background-color: #1E88E5;
-    text-align: center;
-    height: 50px;
-   margin-top:59px;
-    cursor: pointer;
-    box-shadow: inset 0px 0px 8px 3px rgba(136, 136, 136, 0.52);
+  width: 180px;
+  border-radius: 5px;
+  padding: 15px;
+  color: white;
+  background-color: #1E88E5;
+  text-align: center;
+  height: 50px;
+  margin-top:59px;
+  cursor: pointer;
+  box-shadow: inset 0px 0px 8px 3px rgba(136, 136, 136, 0.52);
 }
 .botButtonModalSignUP:active{
     width: 180px;
@@ -424,21 +439,21 @@ export default {
         background-color: #f6a0a3;
         color: #fff;
     }
-    .exclaim{
-      pointer-events: all;
+    .exclaim, .exclaim-repeat, .OtpExclaim {
+      pointer-events: none;
       color:red;
       margin-left: 273px;
-      margin-top: 9px;
       position: absolute;
       z-index: 100;
     }
+    .exclaim{
+      margin-top: 9px;
+    }
+    .exclaim-repeat{
+      margin-top: 74px;
+    }
     .OtpExclaim{
-      pointer-events: none;
-    color:red;
-    margin-left: 273px;
     margin-top: 72px;
-    position: absolute;
-    z-index: 100;
     }
     .spinnerPosResetPassword{
       z-index: 100;

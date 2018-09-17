@@ -14,7 +14,8 @@
     "axios": "^0.18.0",
     "i": "^0.3.6",
     "npm": "^6.4.1",
-    "vue": "^2.5.17"
+    "vue": "^2.5.17",
+    "vue-ripple-directive": "^2.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.1",

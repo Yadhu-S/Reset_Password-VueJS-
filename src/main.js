@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import Ripple from 'vue-ripple-directive'
 import './assets/bootstrap-3.3.7-dist/css/bootstrap.min.css'
 import './assets/css/main.css'
 
@@ -8,6 +9,7 @@ import { faExclamationTriangle, faSpinner, faCheckCircle } from '@fortawesome/fr
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faExclamationTriangle,faSpinner,faCheckCircle)
+Vue.directive('ripple',Ripple)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
