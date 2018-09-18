@@ -46,7 +46,7 @@
           </div>
         </transition>
         <div>
-            <h6 class="loginFooter">By signing in you agree to 123 Find's Terms of Service, Privacy Policy and Conditions</h6>
+            <h6 class="loginFooter">By using our service, you agree to our Terms of Service, Privacy Policy and Conditions</h6>
         </div>
       </div>
     </div>
