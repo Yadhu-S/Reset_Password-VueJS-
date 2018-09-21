@@ -42,7 +42,7 @@
               <input v-model="repeatPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required @keyup="verifyPasswords">
               <label slot="label" class="labelMatPass center-block">Repeat Password</label>
             </mat-input>
-            <p v-ripple class="botButtonModalSignUP center-block" :class="{disableMouseEvents:passChanged, ButtonDisabled:passChanged}" @click="postPassword">Reset Password</p>
+            <p v-ripple class="center-block" :class="{botButtonModalSignUP:!passChanged, disableMouseEvents:passChanged, ButtonDisabled:passChanged,resetSuccess:passChanged }" @click="postPassword">{{secondButtonMessage}}</p>
           </div>
         </transition>
         <div>
@@ -64,6 +64,7 @@ export default {
   },
   data() {
     return {
+      secondButtonMessage: "Reset Password",
       repeatPasswordError : false,
       showPassExclaimIcon:false,
       passChanged:false,
@@ -79,7 +80,7 @@ export default {
       showFirstBoxAndIcon:false,
       showSecondBoxAndIcon:false,
       showThirdBoxAndIcon:true,
-      postUrl:"http://192.168.0.11:8000",
+      postUrl:"https://api.shopnitt.com",
       mobAndOtpPage:true,
       otpValue:null,
       mainButtonState:0,
@@ -113,6 +114,7 @@ export default {
               ctx.secondBoxMessage = "Your password was reset"
               ctx.showThirdBoxAndIcon = true
               ctx.passChanged = true
+              ctx.secondButtonMessage="Done"
               ctx.secondBoxSuccess = true
             }else {
               ctx.secondBoxSuccess = false
@@ -244,7 +246,7 @@ export default {
     font-size: 14px;
 } 
 .secondSuccessDiv{
-    color: green;
+    color: #00C853;
 }
 .secondPageSecondErrorDiv{
   color: red;
@@ -253,9 +255,10 @@ export default {
 .secondSuccessIcon{
     margin-top: 107px;
     position: absolute;
-    color: green;
+    color: #00C853;
 }
-.ButtonDisabled {
+
+.ButtonDisabled, .resetSuccess {
   width: 180px;
     border-radius: 5px;
     padding: 15px;
@@ -268,13 +271,17 @@ export default {
     -webkit-box-shadow: 2px 2px 10px 0px rgba(136, 136, 136, 0.52);
     box-shadow: inset 0 0 3px 1px rgba(136, 136, 136, 0.52);
 }
+.resetSuccess{
+  cursor: pointer;
+  background-color: #00C853;
+}
 
 .ButtonEnabled{
   width: 180px;
   border-radius: 5px;
   padding: 15px;
   color: white;
-  background-color: #1E88E5;
+  background-color: #2979FF;
   text-align: center;
   height: 50px;
   margin-top:59px;
@@ -287,7 +294,7 @@ export default {
   border-radius: 5px;
   padding: 15px;
   color: white;
-  background-color: #1E88E5;
+  background-color: #2979FF;
   text-align: center;
   height: 50px;
   margin-top:59px;
