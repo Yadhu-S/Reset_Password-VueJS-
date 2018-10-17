@@ -33,16 +33,18 @@
             <font-awesome-icon v-if="spinnerActive" class="spinnerPosResetPassword" icon="spinner" size="lg" pulse/>
             <font-awesome-icon v-if="passChanged" :class="{secondSuccessIcon:showThirdBoxAndIcon}" icon="check-circle" size="lg"/>
             <font-awesome-icon v-if="showPassExclaimIcon" class="exclaim-repeat" icon="exclamation-triangle" size="lg"/>
+            <font-awesome-icon v-if="showPassLengthExclaimIcon" class="exclaim" icon="exclamation-triangle" size="lg"/>
+            <p v-if="showPassLengthExclaimIcon" :class="{firstErrorDiv: firstBoxError}">{{firstBoxMessage}}</p>
             <p :class="{secondSuccessDiv:showThirdBoxAndIcon, secondPageSecondErrorDiv:repeatPasswordError}">{{secondBoxMessage}}</p>
             <mat-input>
-              <input v-model="newPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required>
+              <input v-model="newPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required @blur="verifyPasswordLength">
               <label slot="label" class="labelMat">New Password</label>
             </mat-input>
             <mat-input>
               <input v-model="repeatPassword" :class="{disableMouseEvents:passChanged}" slot="ipField" type="password" class="inputMat" required @keyup="verifyPasswords">
               <label slot="label" class="labelMatPass center-block">Repeat Password</label>
             </mat-input>
-            <p v-ripple class="center-block" :class="{botButtonModalSignUP:!passChanged, disableMouseEvents:passChanged, ButtonDisabled:passChanged,resetSuccess:passChanged }" @click="postPassword">{{secondButtonMessage}}</p>
+            <p v-ripple class="center-block" :class="{botButtonModalSignUP:!passChanged, ButtonDisabled:passChanged,resetSuccess:passChanged }" @click="postPassword">{{secondButtonMessage}}</p>
           </div>
         </transition>
         <div>
@@ -151,15 +153,15 @@
       <div class="tosContent"> 
         <h1>Terms and conditions</h1>
 
-        <p>These terms and conditions ("Terms", "Agreement") are an agreement between Leadler Technologies Private Limited ("Leadler Technologies Private Limited", "us", "we" or "our") and you ("User", "you" or "your"). This Agreement sets forth the general terms and conditions of your use of the Shopnitt mobile application and any of its products or services (collectively, "Mobile Application" or "Services").</p>
+        <p>These terms and conditions ("Terms", "Agreement") are an agreement between Leadler Technologies Private Limited ("Leadler Technologies Private Limited", "us", "we" or "our") and you ("User", "you" or "your"). This Agreement sets forth the general terms and conditions of your use of the Shopnitt application and any of its products or services (collectively, "Application" or "Services").</p>
 
         <h2>Accounts and membership</h2>
 
-        <p>You must be at least 18 years of age to use this Mobile Application. By using this Mobile Application and by agreeing to this Agreement you warrant and represent that you are at least 18 years of age. If you create an account in the Mobile Application, you are responsible for maintaining the security of your account and you are fully responsible for all activities that occur under the account and any other actions taken in connection with it. Providing false contact information of any kind may result in the termination of your account. You must immediately notify us of any unauthorized uses of your account or any other breaches of security. We will not be liable for any acts or omissions by you, including any damages of any kind incurred as a result of such acts or omissions. We may suspend, disable, or delete your account (or any part thereof) if we determine that you have violated any provision of this Agreement or that your conduct or content would tend to damage our reputation and goodwill. If we delete your account for the foregoing reasons, you may not re-register for our Services. We may block your email address and Internet protocol address to prevent further registration.</p>
+        <p>You must be at least 18 years of age to use this Application. By using this Application and by agreeing to this Agreement you warrant and represent that you are at least 18 years of age. If you create an account in the Application, you are responsible for maintaining the security of your account and you are fully responsible for all activities that occur under the account and any other actions taken in connection with it. Providing false contact information of any kind may result in the termination of your account. You must immediately notify us of any unauthorized uses of your account or any other breaches of security. We will not be liable for any acts or omissions by you, including any damages of any kind incurred as a result of such acts or omissions. We may suspend, disable, or delete your account (or any part thereof) if we determine that you have violated any provision of this Agreement or that your conduct or content would tend to damage our reputation and goodwill. If we delete your account for the foregoing reasons, you may not re-register for our Services. We may block your email address and Internet protocol address to prevent further registration.</p>
 
         <h2>User content</h2>
 
-        <p>We do not own any data, information or material ("Content") that you submit in the Mobile Application in the course of using the Service. You shall have sole responsibility for the accuracy, quality, integrity, legality, reliability, appropriateness, and intellectual property ownership or right to use of all submitted Content. We may, but have no obligation to, monitor Content in the Mobile Application submitted or created using our Services by you. Unless specifically permitted by you, your use of the Mobile Application does not grant us the license to use, reproduce, adapt, modify, publish or distribute the Content created by you or stored in your user account for commercial, marketing or any similar purpose. But you grant us permission to access, copy, distribute, store, transmit, reformat, display and perform the Content of your user account solely as required for the purpose of providing the Services to you. Without limiting any of those representations or warranties, we have the right, though not the obligation, to, in our own sole discretion, refuse or remove any Content that, in our reasonable opinion, violates any of our policies or is in any way harmful or objectionable.</p>
+        <p>We do not own any data, information or material ("Content") that you submit in the Application in the course of using the Service. You shall have sole responsibility for the accuracy, quality, integrity, legality, reliability, appropriateness, and intellectual property ownership or right to use of all submitted Content. We may, but have no obligation to, monitor Content in the Application submitted or created using our Services by you. Unless specifically permitted by you, your use of the Application does not grant us the license to use, reproduce, adapt, modify, publish or distribute the Content created by you or stored in your user account for commercial, marketing or any similar purpose. But you grant us permission to access, copy, distribute, store, transmit, reformat, display and perform the Content of your user account solely as required for the purpose of providing the Services to you. Without limiting any of those representations or warranties, we have the right, though not the obligation, to, in our own sole discretion, refuse or remove any Content that, in our reasonable opinion, violates any of our policies or is in any way harmful or objectionable.</p>
 
         <h2>Billing and payments</h2>
 
@@ -167,35 +169,35 @@
 
         <h2>Accuracy of information</h2>
 
-        <p>Occasionally there may be information in the Mobile Application that contains typographical errors, inaccuracies or omissions that may relate to product descriptions, pricing, product shipping charges, availability, promotions and offers. We reserve the right to correct any errors, inaccuracies or omissions, and to change or update information or cancel orders if any information in the Mobile Application or on any related Service is inaccurate at any time without prior notice (including after you have submitted your order). We undertake no obligation to update, amend or clarify information in the Mobile Application including, without limitation, pricing information, except as required by law. No specified update or refresh date applied in the Mobile Application should be taken to indicate that all information in the Mobile Application or on any related Service has been modified or updated.</p>
+        <p>Occasionally there may be information in the Application that contains typographical errors, inaccuracies or omissions that may relate to product descriptions, pricing, product shipping charges, availability, promotions and offers. We reserve the right to correct any errors, inaccuracies or omissions, and to change or update information or cancel orders if any information in the Application or on any related Service is inaccurate at any time without prior notice (including after you have submitted your order). We undertake no obligation to update, amend or clarify information in the Application including, without limitation, pricing information, except as required by law. No specified update or refresh date applied in the Application should be taken to indicate that all information in the Application or on any related Service has been modified or updated.</p>
 
         <h2>Third-party services</h2>
 
-        <p>If you decide to enable, access or use third-party services, be advised that your access and use of such other services are governed solely by the terms and conditions of such other services, and we do not endorse, are not responsible or liable for, and make no representations as to any aspect of such other services, including, without limitation, their content or the manner in which they handle data (including your data) or any interaction between you and the provider of such other services. You irrevocably waive any claim against Leadler Technologies Private Limited with respect to such other services. Leadler Technologies Private Limited is not liable for any damage or loss caused or alleged to be caused by or in connection with your enablement, access or use of any such other services, or your reliance on the privacy practices, data security processes or other policies of such other services. You may be required to register for or log into such other services on their respective mobile applications. By enabling any other services, you are expressly permitting Leadler Technologies Private Limited to disclose your data as necessary to facilitate the use or enablement of such other service.</p>
+        <p>If you decide to enable, access or use third-party services, be advised that your access and use of such other services are governed solely by the terms and conditions of such other services, and we do not endorse, are not responsible or liable for, and make no representations as to any aspect of such other services, including, without limitation, their content or the manner in which they handle data (including your data) or any interaction between you and the provider of such other services. You irrevocably waive any claim against Leadler Technologies Private Limited with respect to such other services. Leadler Technologies Private Limited is not liable for any damage or loss caused or alleged to be caused by or in connection with your enablement, access or use of any such other services, or your reliance on the privacy practices, data security processes or other policies of such other services. You may be required to register for or log into such other services on their respective applications. By enabling any other services, you are expressly permitting Leadler Technologies Private Limited to disclose your data as necessary to facilitate the use or enablement of such other service.</p>
 
         <h2>Backups</h2>
 
         <p>We perform regular backups of the Content and will do our best to ensure completeness and accuracy of these backups. In the event of the hardware failure or data loss we will restore backups automatically to minimize the impact and downtime.</p>
 
-        <h2>Links to other mobile applications</h2>
+        <h2>Links to other applications</h2>
 
-        <p>Although this Mobile Application may be linked to other mobile applications, we are not, directly or indirectly, implying any approval, association, sponsorship, endorsement, or affiliation with any linked mobile application, unless specifically stated herein. We are not responsible for examining or evaluating, and we do not warrant the offerings of, any businesses or individuals or the content of their mobile applications. We do not assume any responsibility or liability for the actions, products, services, and content of any other third-parties. You should carefully review the legal statements and other conditions of use of any mobile application which you access through a link from this Mobile Application. Your linking to any other off-site mobile applications is at your own risk.</p>
+        <p>Although this Application may be linked to other applications, we are not, directly or indirectly, implying any approval, association, sponsorship, endorsement, or affiliation with any linked application, unless specifically stated herein. We are not responsible for examining or evaluating, and we do not warrant the offerings of, any businesses or individuals or the content of their applications. We do not assume any responsibility or liability for the actions, products, services, and content of any other third-parties. You should carefully review the legal statements and other conditions of use of any application which you access through a link from this Application. Your linking to any other off-site applications is at your own risk.</p>
 
         <h2>Advertisements</h2>
 
-        <p>During use of the Mobile Application, you may enter into correspondence with or participate in promotions of advertisers or sponsors showing their goods or services through the Mobile Application. Any such activity, and any terms, conditions, warranties or representations associated with such activity, is solely between you and the applicable third-party. We shall have no liability, obligation or responsibility for any such correspondence, purchase or promotion between you and any such third-party.</p>
+        <p>During use of the Application, you may enter into correspondence with or participate in promotions of advertisers or sponsors showing their goods or services through the Application. Any such activity, and any terms, conditions, warranties or representations associated with such activity, is solely between you and the applicable third-party. We shall have no liability, obligation or responsibility for any such correspondence, purchase or promotion between you and any such third-party.</p>
 
         <h2>Prohibited uses</h2>
 
-        <p>In addition to other terms as set forth in the Agreement, you are prohibited from using the Mobile Application or its Content: (a) for any unlawful purpose; (b) to solicit others to perform or participate in any unlawful acts; (c) to violate any international, federal, provincial or state regulations, rules, laws, or local ordinances; (d) to infringe upon or violate our intellectual property rights or the intellectual property rights of others; (e) to harass, abuse, insult, harm, defame, slander, disparage, intimidate, or discriminate based on gender, sexual orientation, religion, ethnicity, race, age, national origin, or disability; (f) to submit false or misleading information; (g) to upload or transmit viruses or any other type of malicious code that will or may be used in any way that will affect the functionality or operation of the Service or of any related mobile application, other mobile applications, or the Internet; (h) to collect or track the personal information of others; (i) to spam, phish, pharm, pretext, spider, crawl, or scrape; (j) for any obscene or immoral purpose; or (k) to interfere with or circumvent the security features of the Service or any related mobile application, other mobile applications, or the Internet. We reserve the right to terminate your use of the Service or any related mobile application for violating any of the prohibited uses.</p>
+        <p>In addition to other terms as set forth in the Agreement, you are prohibited from using the Application or its Content: (a) for any unlawful purpose; (b) to solicit others to perform or participate in any unlawful acts; (c) to violate any international, federal, provincial or state regulations, rules, laws, or local ordinances; (d) to infringe upon or violate our intellectual property rights or the intellectual property rights of others; (e) to harass, abuse, insult, harm, defame, slander, disparage, intimidate, or discriminate based on gender, sexual orientation, religion, ethnicity, race, age, national origin, or disability; (f) to submit false or misleading information; (g) to upload or transmit viruses or any other type of malicious code that will or may be used in any way that will affect the functionality or operation of the Service or of any related application, other applications, or the Internet; (h) to collect or track the personal information of others; (i) to spam, phish, pharm, pretext, spider, crawl, or scrape; (j) for any obscene or immoral purpose; or (k) to interfere with or circumvent the security features of the Service or any related application, other applications, or the Internet. We reserve the right to terminate your use of the Service or any related application for violating any of the prohibited uses.</p>
 
         <h2>Intellectual property rights</h2>
 
-        <p>This Agreement does not transfer to you any intellectual property owned by Leadler Technologies Private Limited or third-parties, and all rights, titles, and interests in and to such property will remain (as between the parties) solely with Leadler Technologies Private Limited. All trademarks, service marks, graphics and logos used in connection with our Mobile Application or Services, are trademarks or registered trademarks of Leadler Technologies Private Limited or Leadler Technologies Private Limited licensors. Other trademarks, service marks, graphics and logos used in connection with our Mobile Application or Services may be the trademarks of other third-parties. Your use of our Mobile Application and Services grants you no right or license to reproduce or otherwise use any Leadler Technologies Private Limited or third-party trademarks.</p>
+        <p>This Agreement does not transfer to you any intellectual property owned by Leadler Technologies Private Limited or third-parties, and all rights, titles, and interests in and to such property will remain (as between the parties) solely with Leadler Technologies Private Limited. All trademarks, service marks, graphics and logos used in connection with our Application or Services, are trademarks or registered trademarks of Leadler Technologies Private Limited or Leadler Technologies Private Limited licensors. Other trademarks, service marks, graphics and logos used in connection with our Application or Services may be the trademarks of other third-parties. Your use of our Application and Services grants you no right or license to reproduce or otherwise use any Leadler Technologies Private Limited or third-party trademarks.</p>
 
         <h2>Disclaimer of warranty</h2>
 
-        <p>You agree that your use of our Mobile Application or Services is solely at your own risk. You agree that such Service is provided on an "as is" and "as available" basis. We expressly disclaim all warranties of any kind, whether express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose and non-infringement. We make no warranty that the Services will meet your requirements, or that the Service will be uninterrupted, timely, secure, or error-free; nor do we make any warranty as to the results that may be obtained from the use of the Service or as to the accuracy or reliability of any information obtained through the Service or that defects in the Service will be corrected. You understand and agree that any material and/or data downloaded or otherwise obtained through the use of Service is done at your own discretion and risk and that you will be solely responsible for any damage to your computer system or loss of data that results from the download of such material and/or data. We make no warranty regarding any goods or services purchased or obtained through the Service or any transactions entered into through the Service. No advice or information, whether oral or written, obtained by you from us or through the Service shall create any warranty not expressly made herein.</p>
+        <p>You agree that your use of our Application or Services is solely at your own risk. You agree that such Service is provided on an "as is" and "as available" basis. We expressly disclaim all warranties of any kind, whether express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose and non-infringement. We make no warranty that the Services will meet your requirements, or that the Service will be uninterrupted, timely, secure, or error-free; nor do we make any warranty as to the results that may be obtained from the use of the Service or as to the accuracy or reliability of any information obtained through the Service or that defects in the Service will be corrected. You understand and agree that any material and/or data downloaded or otherwise obtained through the use of Service is done at your own discretion and risk and that you will be solely responsible for any damage to your computer system or loss of data that results from the download of such material and/or data. We make no warranty regarding any goods or services purchased or obtained through the Service or any transactions entered into through the Service. No advice or information, whether oral or written, obtained by you from us or through the Service shall create any warranty not expressly made herein.</p>
 
         <h2>Limitation of liability</h2>
 
@@ -203,7 +205,7 @@
 
         <h2>Indemnification</h2>
 
-        <p>You agree to indemnify and hold Leadler Technologies Private Limited and its affiliates, directors, officers, employees, and agents harmless from and against any liabilities, losses, damages or costs, including reasonable attorneys' fees, incurred in connection with or arising from any third-party allegations, claims, actions, disputes, or demands asserted against any of them as a result of or relating to your Content, your use of the Mobile Application or Services or any willful misconduct on your part.</p>
+        <p>You agree to indemnify and hold Leadler Technologies Private Limited and its affiliates, directors, officers, employees, and agents harmless from and against any liabilities, losses, damages or costs, including reasonable attorneys' fees, incurred in connection with or arising from any third-party allegations, claims, actions, disputes, or demands asserted against any of them as a result of or relating to your Content, your use of the Application or Services or any willful misconduct on your part.</p>
 
         <h2>Severability</h2>
 
@@ -219,11 +221,11 @@
 
         <h2>Changes and amendments</h2>
 
-        <p>We reserve the right to modify this Agreement or its policies relating to the Mobile Application or Services at any time, effective upon posting of an updated version of this Agreement in the Mobile Application. When we do we will revise the updated date at the bottom of this page. Continued use of the Mobile Application after any such changes shall constitute your consent to such changes.</p>
+        <p>We reserve the right to modify this Agreement or its policies relating to the Application or Services at any time, effective upon posting of an updated version of this Agreement in the Application. When we do we will revise the updated date at the bottom of this page. Continued use of the Application after any such changes shall constitute your consent to such changes.</p>
 
         <h2>Acceptance of these terms</h2>
 
-        <p>You acknowledge that you have read this Agreement and agree to all its terms and conditions. By using the Mobile Application or its Services you agree to be bound by this Agreement. If you do not agree to abide by the terms of this Agreement, you are not authorized to use or access the Mobile Application and its Services.</p>
+        <p>You acknowledge that you have read this Agreement and agree to all its terms and conditions. By using the Application or its Services you agree to be bound by this Agreement. If you do not agree to abide by the terms of this Agreement, you are not authorized to use or access the Application and its Services.</p>
 
         <h2>Contacting us</h2>
 
@@ -238,48 +240,64 @@
 <script>
 import MatInputBox from "./components/InputBoxMaterial.vue"
 import axios from 'axios'
-
+function initialState(){
+      return {
+        showPassLengthExclaimIcon:false,
+        secondButtonMessage: "Reset Password",
+        repeatPasswordError : false,
+        showPassExclaimIcon:false,
+        passChanged:false,
+        disableMouseOTP:false,
+        disableMouseMob:false,
+        mobNoFldReadOnly:false,
+        spinnerActive:false,
+        secondBoxError:false,
+        firstBoxError:false,
+        firstBoxMessage:"",
+        secondBoxMessage:"",
+        secondBoxSuccess:false,
+        showFirstBoxAndIcon:false,
+        showSecondBoxAndIcon:false,
+        showThirdBoxAndIcon:true,
+        postUrl:"https://api.shopnitt.com",
+        mobAndOtpPage:true,
+        otpValue:null,
+        mainButtonState:0,
+        newPassword: "",
+        repeatPassword:"",
+        mobileNumber: "",
+        searchInput: null,
+        showSignIn: true,
+        OtpGenerated: false,
+      };
+    }
 export default {
   name: 'app',
   components: {
     'mat-input' : MatInputBox
   },
-  data() {
-    return {
-      secondButtonMessage: "Reset Password",
-      repeatPasswordError : false,
-      showPassExclaimIcon:false,
-      passChanged:false,
-      disableMouseOTP:false,
-      disableMouseMob:false,
-      mobNoFldReadOnly:false,
-      spinnerActive:false,
-      secondBoxError:false,
-      firstBoxError:false,
-      firstBoxMessage:"",
-      secondBoxMessage:"",
-      secondBoxSuccess:false,
-      showFirstBoxAndIcon:false,
-      showSecondBoxAndIcon:false,
-      showThirdBoxAndIcon:true,
-      postUrl:"https://api.shopnitt.com",
-      mobAndOtpPage:true,
-      otpValue:null,
-      mainButtonState:0,
-      newPassword: "",
-      repeatPassword:"",
-      mobileNumber: "",
-      searchInput: null,
-      showSignIn: true,
-      OtpGenerated: false,
-    };
-  },
+    data: function (){
+        return initialState();
+    },
     methods: {
+      reset: function (){
+        Object.assign(this.$data,initialState())
+      },
       show(){
         this.$modal.show("tos");
       },
       showPrivacy(){
         this.$modal.show("privacyPolicy");
+      },
+      verifyPasswordLength(){
+        if (this.newPassword.length < 6) {
+          this.showPassLengthExclaimIcon = true
+          this.firstBoxError = true
+          this.firstBoxMessage = "Password must be at least 6 characters"
+        } else {
+          this.showPassLengthExclaimIcon = false
+          this.firstBoxError = false
+        }
       },
       verifyPasswords(){
         if (this.newPassword != this.repeatPassword) {
@@ -293,9 +311,12 @@ export default {
         }
       },
       postPassword(){
-        this.spinnerActive = true
         const ctx = this
-        if (this.newPassword == this.repeatPassword) {
+        if (ctx.passChanged){
+          ctx.reset()
+        }
+        else if (this.newPassword == this.repeatPassword && this.newPassword.length >= 6 && this.repeatPassword.length >= 6) {
+          this.spinnerActive = true
           axios.post(this.postUrl+"/shop/password/reset", { "contact-no": this.mobileNumber, "otp":parseInt(this.otpValue),"new-password":this.newPassword})
           .then(function(response){
             if (response.data.success == true){
@@ -319,6 +340,7 @@ export default {
           if (response.data.success == true) {
           ctx.mainButtonState=2
           ctx.mobAndOtpPage = false
+          ctx.secondBoxMessage = ""
           }else{
             if (response.data.message.includes("E023")){
               ctx.secondBoxMessage = "OTP Expired"
@@ -416,7 +438,7 @@ export default {
   opacity: 0
 }
 .firstErrorDiv{
-  padding-top: 45px;
+  padding-top: 40px;
     position: absolute;
     font-size: 12px;
     color: red;
